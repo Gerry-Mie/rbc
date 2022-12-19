@@ -1,0 +1,11 @@
+web/node_modules
+web/build
+web/dist
+web/.env
+web/.firebase
+
+backend/rbc-app-admin-sdk.json
+backend/firebase.json
+backend/functions/node_modules
+backend/*.log
+backend/logs
