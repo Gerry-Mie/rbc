@@ -9,3 +9,7 @@ backend/firebase.json
 backend/functions/node_modules
 backend/*.log
 backend/logs
+
+server/node_modules
+server/.env
+server/dist
