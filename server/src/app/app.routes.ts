@@ -1,8 +1,9 @@
-import {Router } from 'express'
-import member from '../member/member.controller'
 
-const router = Router()
+import  MemberController  from '../member/member.controller'
+import initRoutes from './services/init-routes';
 
-router.use('/member', member)
 
-export default router
+// router.use('/m',m)
+export default initRoutes([
+    MemberController,
+])
