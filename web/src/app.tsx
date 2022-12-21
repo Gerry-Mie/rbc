@@ -10,8 +10,9 @@ const App = () => {
 
     useOnAuthStateChanged()
     useMetaTheme()
+
     const userState = useAppSelector(state => state.user.state)
-    //todo
+
     if (userState === 'loading') return <Loading/>
 
     return <RouterProvider router={pages}/>

@@ -11,7 +11,7 @@ const ManagementLayout = () => {
 	const navigate = useNavigate()
 	const userState = useAppSelector(state => state.user.state)
 
-	if (userState==='empty') navigate('/login')
+	if (userState==='empty') navigate('/login', {replace: true})
 
 	return (
 		<AppShell

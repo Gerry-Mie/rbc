@@ -29,14 +29,19 @@ const Dashboard = () => {
                         error={memberCount.error}
                         count={memberCount.data}
                         color="#F59F00"/>
-                    <CountWidget label="Upcoming Events" Icon={IconCalendarEvent} count={1} color="#40C057"/>
-                    <CountWidget label="Birthdays" Icon={IconGift} count={5} color="#FF6B6B"/>
+                    <CountWidget
+                        label="Upcoming Events"
+                        Icon={IconCalendarEvent} count={1}
+                        color="#40C057"/>
+                    <CountWidget
+                        label="Birthdays"
+                        Icon={IconGift}
+                        count={5} color="#FF6B6B"/>
                 </Flex>
             </Box>
 
             <Box mt={30}>
-            <AttendanceGraph/>
-
+                <AttendanceGraph/>
             </Box>
         </>
     )
