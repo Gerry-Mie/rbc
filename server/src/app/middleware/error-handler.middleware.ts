@@ -1,7 +1,7 @@
 import { ErrorRequestHandler } from 'express';
 import { HttpError } from '../exceptions/http-error';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
-const errorHandlerMiddleware: ErrorRequestHandler = (error, req, res) => {
+const errorHandlerMiddleware: ErrorRequestHandler = (error, req, res, _) => {
 
     if (error instanceof HttpError) {
         return res.status(error.status).send({

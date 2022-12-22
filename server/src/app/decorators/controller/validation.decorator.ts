@@ -9,8 +9,6 @@ export const Validate = (Obj: ClassConstructor<any>, p: string | undefined = und
         const metadataKey = 'methods'
 
         const methods: DecoratorMethods = Reflect.getMetadata(metadataKey, target.constructor) || {}
-        // validation middleware
-
 
         let method: DecoratorMethod = methods[propertyKey] || {}
 

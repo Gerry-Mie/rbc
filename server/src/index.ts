@@ -1,4 +1,4 @@
-import express from 'express'
+import express, { RequestHandler } from 'express'
 import routes from './app/app.routes';
 import errorHandlerMiddleware from './app/middleware/error-handler.middleware';
 import { NotFoundError } from './app/exceptions/http-error';
@@ -9,12 +9,38 @@ app.use(express.json())
 
 app.use('/api', routes)
 
-// experimental
+// experimental --------------------------------------------------------------------------------
 app.get('/sample', (req, res) => {
-    console.log(req.body)
-    res.status(201)
-    throw new NotFoundError('Something went wrong', 'm-invalid-data')
+    const fun = () => true
+    let startTime = performance.now();
+    fun()
+    let endTime = performance.now();
+    let elapsedTime = endTime - startTime;
+
+    console.log(`Time elapsed: ${elapsedTime} milliseconds`);
+    // throw new NotFoundError('Something went wrong', 'm-invalid-data')
+    res.send('test')
 })
+
+
+const catError = (callback: RequestHandler): RequestHandler => (req, res, next) => {
+    console.log('1')
+    try {
+        callback(req, res, next)
+        console.log('3-a')
+    } catch (err) {
+        console.log('3-b')
+        next(err)
+    }
+}
+
+
+app.get('/sample2', catError((_req, _res) => {
+    console.log('2')
+    throw new NotFoundError('Something went wrong', 'm-invalid-data')
+}))
+
+// experimental -----------------------------------------------------------------------------------
 
 app.use(errorHandlerMiddleware)
 
