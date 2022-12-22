@@ -2,7 +2,7 @@ import {RequestHandler } from 'express';
 
 export type MethodType = 'get' | 'post' | 'put' | 'delete'
 
-export type DecoratorParameterType = 'body' | 'req' | 'res' | 'param' | 'query'| 'next'
+export type DecoratorParameterType = 'body' | 'req' | 'res' | 'param' | 'query'
 
 export type DecoratorParameter = {
     type: DecoratorParameterType,
@@ -14,7 +14,7 @@ export type DecoratorMethod = {
     method: MethodType
     path: string
     params: DecoratorParameter[]
-    validation: RequestHandler[]
+    validation?: RequestHandler
     middleware?: RequestHandler[]
 
 }

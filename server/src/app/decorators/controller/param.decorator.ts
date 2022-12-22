@@ -1,11 +1,12 @@
 import { DecoratorParameterType, DecoratorMethods, DecoratorMethod } from '../../types/decorators.types';
 import { Validate } from './validation.decorator';
 import 'reflect-metadata';
+import { CONTROLLER_METADATA_KEY_ROUTES } from '../../constants/decorator-metadata-key';
 
 const parameter = (paramType: DecoratorParameterType) =>
     (p: string | undefined = undefined) => function (target: object, propertyKey: string, index: number) {
 
-        const metadataKey = 'methods'
+        const metadataKey = CONTROLLER_METADATA_KEY_ROUTES
 
         const methods: DecoratorMethods = Reflect.getMetadata(metadataKey, target.constructor) || {}
 
@@ -41,8 +42,8 @@ export const Params = parameter('param')
 
 export const Query = parameter('query')
 
-/**
- * required return to return the next function
- * ex.  return next(error)
- */
-export const Next = parameter('next')()
+// /**
+//  * required to return the next
+//  * ex.  return next(error)
+//  */
+// export const Next = parameter('next')()
