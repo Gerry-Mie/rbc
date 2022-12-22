@@ -1,10 +1,11 @@
 import 'reflect-metadata';
 import { DecoratorMethod, DecoratorMethods, MethodType } from '../../types/decorators.types';
+import { CONTROLLER_METADATA_KEY_ROUTES } from '../../constants/decorator-metadata-key';
 
 const method = (methodType: MethodType) => (path: string = '/') =>
     function (target: any, propertyKey: string, _: PropertyDescriptor) {
 
-        const metadataKey = 'methods'
+        const metadataKey = CONTROLLER_METADATA_KEY_ROUTES
 
         const methods: DecoratorMethods = Reflect.getMetadata(metadataKey, target.constructor) || {}
 
@@ -13,11 +14,9 @@ const method = (methodType: MethodType) => (path: string = '/') =>
         }
 
         let method: DecoratorMethod = methods[propertyKey] || {}
-        const validation = method.validation || []
 
         method = {
             ...method,
-            validation,
             method: methodType,
             path
         }
