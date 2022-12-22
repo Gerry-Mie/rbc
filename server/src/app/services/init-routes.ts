@@ -24,7 +24,7 @@ const initRoutes = (Controllers: ClassConstructor<any>[]) => {
         if (!methods || !controllerPath || typeof methods !== 'object')
             return console.error('Invalid Controller: ' + Controller.name);
 
-        // create instance of each controller
+        // create instance of controller
         const instance = new Controller()
 
         const rtr = Router()
@@ -38,7 +38,6 @@ const initRoutes = (Controllers: ClassConstructor<any>[]) => {
             const callback: RequestHandler = async (req, res, next) => {
 
                 const parameters = route.params? getParams(req, res, route): []
-
                 parameters.push(...[req, res])
 
                 // catch the errors and pass it to error middleware
@@ -50,7 +49,6 @@ const initRoutes = (Controllers: ClassConstructor<any>[]) => {
                     next(error)
                 }
             }
-
             const middlewares = []
             if (route.middleware) middlewares.push(...route.middleware);
             if (route.validation) middlewares.push(route.validation);
@@ -62,7 +60,6 @@ const initRoutes = (Controllers: ClassConstructor<any>[]) => {
     })
     return router
 }
-
 
 const getParams = (req: Request, res: Response, route: DecoratorMethod): unknown[] => {
 
@@ -77,7 +74,6 @@ const getParams = (req: Request, res: Response, route: DecoratorMethod): unknown
         query: req.query,
         // next: (arg: any) => () => next(arg)
     }
-
     return sortedParam.map(param => {
         const data = params[param.type]
         if (param.property) return data[param.property]

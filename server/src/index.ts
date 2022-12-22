@@ -9,7 +9,8 @@ app.use(express.json())
 
 app.use('/api', routes)
 
-// experimental --------------------------------------------------------------------------------
+// experimental ********************************************************************************************************
+
 app.get('/sample', (req, res) => {
     const fun = () => true
     let startTime = performance.now();
@@ -40,7 +41,7 @@ app.get('/sample2', catchError((_req, _res) => {
     throw new NotFoundError('Something went wrong', 'm-invalid-data')
 }))
 
-// experimental -----------------------------------------------------------------------------------
+// experimental ********************************************************************************************************
 
 app.use(errorHandlerMiddleware)
 
