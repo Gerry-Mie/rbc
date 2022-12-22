@@ -1,7 +1,7 @@
-import { Request, Response, Router } from 'express';
-import { ParamType, Routes } from '../decorators';
+import { Request, RequestHandler, Response, Router } from 'express';
 import { ClassConstructor } from 'class-transformer';
 import 'reflect-metadata';
+import { DecoratorMethod, DecoratorMethods, DecoratorParameterType } from '../types/decorators.types';
 
 const initRoutes = (Controllers: ClassConstructor<any>[]) => {
 
@@ -9,57 +9,71 @@ const initRoutes = (Controllers: ClassConstructor<any>[]) => {
 
     // loop the provided controllers and register the routes to Router 'router'
     Controllers.forEach(Controller => {
-        // skip this Controller if the required prototype is not provided
-        if (!Controller.prototype.routes || !Controller.prototype.path) return;
+
+        //get all methods that added by decorator [Get, Post, Put, Delete]
+        const methods: DecoratorMethods = Reflect.getMetadata('methods', Controller)
+        // get the path that added by Controller decorator
+        const controllerPath: string = Reflect.getMetadata('path', Controller)
+
+        // skip this Controller if the required metadata is not provided
+        if (!methods || !controllerPath || typeof methods !== 'object') return;
         // create instance of each controller
         const instance = new Controller()
 
         const rtr = Router()
-        //get all request that registered by decorator [Get, Post, Put, Delete]
-        const routes: Routes = Controller.prototype.routes
 
-        if (typeof routes === 'object') {
+        // loop each method to register it to Router 'rtr'
+        for (let i in methods) {
 
-            // loop each request to register it to Router 'rtr'
-            for (let i in routes) {
-                const route = routes[i]
-                // check if this request has parameter decorator
+            const route: DecoratorMethod = methods[i]
+
+            // callback for Route 'rtr
+            const callback: RequestHandler = async (req, res, next) => {
+                const parameters = []
                 if (route.params) {
                     const sortedParam = route.params.sort((a, b) =>
                         a.index > b.index ? 0 : -1)
-
-                    // register the request to Router 'rtr'  with custom arguments
-                    rtr[route.method](route.path, route.validation, (req: Request, res: Response) => {
-
-                        const params = sortedParam.map(param => {
-                            return getParams(req, res, param.type, param.property)
-                        })
-
-                        //  call the original method of request and pass the custom parameter to decorator
-                        instance[i](...params, res, req)
+                    sortedParam.forEach(param => {
+                        parameters.push(getParams(req, res, next, param.type, param.property))
                     })
+                }
+                parameters.push(...[req, res, next])
 
-                } else {
-                    // register the request to Router 'rtr with original the original argument's req, res, next
-                    rtr[route.method](route.path, route.validation, instance[i].bind(instance))
+                try {
+                    const data = await instance[i](...parameters)
+                    if (typeof data === 'function') data();
+                    else res.send({data});
+                } catch (error) {
+                    next(error)
                 }
             }
-        }
 
+            // register the request to Router 'rtr
+            rtr[route.method](route.path, route.validation, callback)
+
+        }
         // register to Router 'router' each controller's route
-        router.use(Controller.prototype.path, rtr)
+        router.use(controllerPath, rtr)
     })
     return router
 }
 
 
-const getParams = (req: Request, res: Response, paramType: ParamType, key: string | undefined = undefined) => {
-    const paramTypes: { [key in ParamType]: any } = {
+const getParams = (
+    req: Request,
+    res: Response,
+    next: Function,
+    paramType: DecoratorParameterType,
+    key: string | undefined = undefined
+) => {
+
+    const paramTypes: { [key in DecoratorParameterType]: any } = {
         param: req.params,
         req: req,
         body: req.body,
         res: res,
-        query: req.query
+        query: req.query,
+        next: (arg: any) => () => next(arg)
     }
     const data = paramTypes[paramType]
     if (key) return data[key]

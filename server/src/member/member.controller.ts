@@ -1,7 +1,6 @@
-import { Response } from 'express'
 import { PrismaClient } from '@prisma/client'
-import { Body, Controller, Delete, Get, Params, Post, Res } from '../app/decorators';
 import CreateUsrDto from './dto/create-usr.dto';
+import { Body, Controller, Delete, Get, Params, Post } from '../app/decorators';
 
 @Controller('/member')
 class MemberController {
@@ -11,41 +10,19 @@ class MemberController {
     ) {
     }
 
-    @Get('list')
-    async list(@Res() res: Response) {
-        const members = await this.prisma.member.findMany()
-        res.send(members)
+    @Get('/list')
+    async list() {
+        return this.prisma.member.findMany()
     }
 
     @Post('/create')
-    async create(@Body() body: CreateUsrDto, res: Response) {
-        try{
-            const user = await this.prisma.member.create({data: body})
-            res.send(user)
-        }catch (error){
-            res.send({error})
-        }
-
+    async create(@Body() body: CreateUsrDto) {
+        return this.prisma.member.create({data: body})
     }
 
     @Delete('/delete/:id')
-    async delete(@Params('id') id: string, res: Response){
-        try {
-            const member = await this.prisma.member.delete({
-                where:{
-                    id: +id
-                }
-            })
-            res.send(member)
-        }catch (error: any){
-
-            const respose = {
-                code: error.code,
-                message: error?.meta?.cause
-            }
-
-         res.status(404).send({error: respose})
-        }
+    async delete(@Params('id') id: string) {
+        return await this.prisma.member.delete({where: {id: +id}})
     }
 }
 
