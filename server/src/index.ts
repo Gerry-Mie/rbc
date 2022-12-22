@@ -23,7 +23,7 @@ app.get('/sample', (req, res) => {
 })
 
 
-const catError = (callback: RequestHandler): RequestHandler => (req, res, next) => {
+const catchError = (callback: RequestHandler): RequestHandler => (req, res, next) => {
     console.log('1')
     try {
         callback(req, res, next)
@@ -35,7 +35,7 @@ const catError = (callback: RequestHandler): RequestHandler => (req, res, next) 
 }
 
 
-app.get('/sample2', catError((_req, _res) => {
+app.get('/sample2', catchError((_req, _res) => {
     console.log('2')
     throw new NotFoundError('Something went wrong', 'm-invalid-data')
 }))

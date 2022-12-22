@@ -1,7 +1,12 @@
 import { Request, RequestHandler, Response, Router } from 'express';
 import { ClassConstructor } from 'class-transformer';
 import 'reflect-metadata';
-import { DecoratorMethod, DecoratorMethods, DecoratorParameterType } from '../types/decorators.types';
+import {
+    DecoratorMethod,
+    DecoratorMethods,
+    DecoratorParameter,
+    DecoratorParameterType
+} from '../types/decorators.types';
 
 const initRoutes = (Controllers: ClassConstructor<any>[]) => {
 
@@ -34,10 +39,10 @@ const initRoutes = (Controllers: ClassConstructor<any>[]) => {
                     const sortedParam = route.params.sort((a, b) =>
                         a.index > b.index ? 0 : -1)
                     sortedParam.forEach(param => {
-                        parameters.push(getParams(req, res, next, param.type, param.property))
+                        parameters.push(getParams(req, res, next, param))
                     })
                 }
-                parameters.push(...[req, res, next])
+                parameters.push(...[req, res])
 
                 try {
                     const data = await instance[i](...parameters)
@@ -63,11 +68,10 @@ const getParams = (
     req: Request,
     res: Response,
     next: Function,
-    paramType: DecoratorParameterType,
-    key: string | undefined = undefined
+    param: DecoratorParameter
 ) => {
 
-    const paramTypes: { [key in DecoratorParameterType]: any } = {
+    const params: { [key in DecoratorParameterType]: any } = {
         param: req.params,
         req: req,
         body: req.body,
@@ -75,8 +79,8 @@ const getParams = (
         query: req.query,
         next: (arg: any) => () => next(arg)
     }
-    const data = paramTypes[paramType]
-    if (key) return data[key]
+    const data = params[param.type]
+    if (param.property) return data[param.property]
     return data
 }
 
