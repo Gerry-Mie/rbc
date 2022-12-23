@@ -11,7 +11,10 @@ datasource db {
 }
 
 model Member {
-    id Int @id @default(autoincrement())
+    member_id Int @id @default(autoincrement())
     firstname String
     lastname String
+    phoneNumber String @default("")
+    email String @default("")
+    gender String @default("")
 }

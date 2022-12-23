@@ -10,19 +10,24 @@ class MemberController {
     ) {
     }
 
-    @Get('/list')
-    async list() {
+    @Get('list')
+    list() {
         return this.prisma.member.findMany()
     }
 
-    @Post('/create')
+    @Get('count')
+    count() {
+        return this.prisma.member.count()
+    }
+
+    @Post('create')
     async create(@Body() body: CreateUsrDto) {
         return this.prisma.member.create({data: body})
     }
 
-    @Delete('/delete/:id')
+    @Delete('delete/:id')
     async delete(@Params('id') id: string) {
-        return await this.prisma.member.delete({where: {id: +id}})
+        return await this.prisma.member.delete({where: {member_id: +id}})
     }
 }
 
