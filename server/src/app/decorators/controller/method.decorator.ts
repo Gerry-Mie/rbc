@@ -28,4 +28,5 @@ const method = (methodType: MethodType) => (path: string = '/') =>
 
 export const Get = method('get')
 export const Post = method('post')
+export const Put = method('put')
 export const Delete = method('delete')

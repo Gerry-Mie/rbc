@@ -1,7 +1,6 @@
 import express, { RequestHandler } from 'express'
 import routes from './app/app.routes';
 import errorHandlerMiddleware from './app/middleware/error-handler.middleware';
-import { NotFoundError } from './app/exceptions/http-error';
 
 const app = express()
 
@@ -33,9 +32,14 @@ const catchError = (callback: RequestHandler): RequestHandler => (req, res, next
 }
 
 
-app.get('/sample2', catchError((_req, _res) => {
-    console.log('2')
-    throw new NotFoundError('Something went wrong', 'm-invalid-data')
+app.get('/sample2', catchError((_req, _res: any) => {
+    const send = _res.send
+    _res.send = function (data: any) {
+        return () => send.bind(this)(data)
+    }
+    const x = _res.send('new res dot send')
+    x()
+    // throw new NotFoundError('Something went wrong', 'm-invalid-data')
 }))
 
 // experimental ********************************************************************************************************
